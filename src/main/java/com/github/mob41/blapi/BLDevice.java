@@ -57,7 +57,8 @@ import com.github.mob41.blapi.pkt.dis.DiscoveryPacket;
  * @author Anthony
  *
  */
-public abstract class BLDevice implements Closeable {
+public abstract class BLDevice implements Closeable
+{
 
     /**
      * The specific logger for this class
@@ -104,9 +105,31 @@ public abstract class BLDevice implements Closeable {
 
     public static final short DEV_SPMINI_PLUS = 0x2736;
 
+    // 2026.01.09
+    public static final short DEV_SP4L_CN = 0x7568;
+    public static final short DEV_SPMINI_3 = 0x7d11;
+    public static final short DEV_SP4M_JP = 0x756B;
+    public static final short DEV_SP4M = 0x756C;
+    public static final short DEV_MCB1 = 0x756F;
+    public static final short DEV_SP4L_EU = 0x7579;
+    public static final short DEV_SP4L_AU = 0x757B;
+    public static final short DEV_SPMINI_3_2 = 0x7583;
+    public static final short DEV_SP4L_UK = 0x7587;
+    //public static final int DEV_WS4 = 0xA4F9;
+    //public static final int DEV_SP4L_UK_2 = 0xA569;
+    //public static final int DEV_MCB1_2 = 0xA56A;
+    //public static final int DEV_SCB1E = 0xA56B;
+    //public static final int DEV_SP4L_EU_2 = 0xA56C;
+    //public static final int DEV_SP4L_AU_2 = 0xA576;
+    //public static final int DEV_SP4L_UK_3 = 0xA589;
+    //public static final int DEV_SP4L_EU_3 = 0xA5D3;
+    //public static final int DEV_SP4D_US = 0xA6F4;
+
     public static final short DEV_RM_2 = 0x2712;
 
     public static final short DEV_RM_MINI = 0x2737;
+
+    public static final short DEV_RM_MINI_OEM_1 = 0xffffffde;  // 2026.01.09
 
     public static final short DEV_RM_MINI_3 = 0x27c2;
 
@@ -147,6 +170,8 @@ public abstract class BLDevice implements Closeable {
     public static final String DESC_RM_2 = "RM 2";
 
     public static final String DESC_RM_MINI = "RM Mini";
+
+    public static final String DESC_RM_MINI_OEM_1 = "RM Mini 0xffffffde";  // 2026.01.09
 
     public static final String DESC_RM_MINI_3 = "RM Mini 3";
 
@@ -197,6 +222,26 @@ public abstract class BLDevice implements Closeable {
     public static final String DESC_SPMINI_OEM_ALT2 = "Smart Plug OEM Alt 2";
 
     public static final String DESC_SPMINI_PLUS = "Smart Plug Mini Plus";
+
+    // 2026.01.09
+    public static final String DESC_SP4L_CN = "Smart Plug V4L-CN";
+    public static final String DESC_SPMINI3 = "Smart Plug Mini 3";
+    public static final String DESC_SP4M_JP = "Smart Plug 4M JP";
+    public static final String DESC_SP4M = "Smart Plug 4M";
+    public static final String DESC_MCB1 = "Smart Plug MCB1";
+    public static final String DESC_SP4L_EU = "Smart Plug 4L EU";
+    public static final String DESC_SP4L_AU = "Smart Plug 4L AU";
+    public static final String DESC_SPMINI_3_2 = "Smart Plug Mini 3";
+    public static final String DESC_SP4L_UK = "Smart Plug 4L Uk";
+    //public static final String DESC_WS4 = "Smart Plug WS4";
+    //public static final String DESC_SP4L_UK_2 = "Smart Plug 4L UK";
+    //public static final String DESC_MCB1_2 = "Smart Plug MCB1";
+    //public static final String DESC_SCB1E = "Smart Plug SCB1E";
+    //public static final String DESC_SP4L_EU_2 ="Smart Plug 4L EU";
+    //public static final String DESC_SP4L_AU_2 = "Smart Plug 4L AU";
+    //public static final String DESC_SP4L_UK_3 = "Smart Plug 4L Uk";
+    //public static final String DESC_SP4L_EU_3 = "Smart Plug 4L EU";
+    //public static final String DESC_SP4D_US = "Smart Plug 4D US";
 
     public static final String DESC_HYSEN = "Hysen Thermostat";
 
@@ -294,7 +339,8 @@ public abstract class BLDevice implements Closeable {
      * @throws IOException
      *             Problems on constructing a datagram socket
      */
-    protected BLDevice(short deviceType, String deviceDesc, String host, Mac mac) throws IOException {
+    protected BLDevice(short deviceType, String deviceDesc, String host, Mac mac) throws IOException
+    {
         key = INITIAL_KEY;
         iv = INITIAL_IV;
         id = new byte[] { 0, 0, 0, 0 };
@@ -366,7 +412,8 @@ public abstract class BLDevice implements Closeable {
      * @return Boolean whether this method is success or not
      * @throws IOException If I/O goes wrong
      */
-    public boolean auth() throws IOException {
+    public boolean auth() throws IOException
+    {
     	return auth(false);
     }
 
@@ -378,9 +425,11 @@ public abstract class BLDevice implements Closeable {
      * @throws IOException
      *             If I/O goes wrong
      */
-    public boolean auth(boolean reauth) throws IOException {
+    public boolean auth(boolean reauth) throws IOException
+    {
         log.debug("auth Authentication method starts");
-        if(alreadyAuthorized && !reauth) {
+        if(alreadyAuthorized && !reauth)
+        {
         	log.debug("auth Already Authorized.");
         	return true;
         }
@@ -547,43 +596,58 @@ public abstract class BLDevice implements Closeable {
      * @throws IOException
      *             Problems when constucting a datagram socket
      */
-    public static BLDevice createInstance(short deviceType, String host, Mac mac) throws IOException {
+    public static BLDevice createInstance(short deviceType, String host, Mac mac) throws IOException
+    {
         String desc = BLDevice.getDescOfType(deviceType);
-        switch (deviceType) {
-        case DEV_SP1:
-            return new SP1Device(host, mac);
-        case DEV_SP2:
-        case DEV_SP2_HONEYWELL_ALT1:
-        case DEV_SP2_HONEYWELL_ALT2:
-        case DEV_SP2_HONEYWELL_ALT3:
-        case DEV_SP2_HONEYWELL_ALT4:
-        case DEV_SPMINI:
-        case DEV_SP3:
-        case DEV_SPMINI2:
-        case DEV_SPMINI_OEM_ALT1:
-        case DEV_SPMINI_OEM_ALT2:
-        case DEV_SPMINI_PLUS:
-            return new SP2Device(deviceType, desc, host, mac);
-        case DEV_RM_2:
-        case DEV_RM_MINI:
-        case DEV_RM_MINI_3:
-            return new RM2Device(deviceType, desc, host, mac);
-        case DEV_RM_PRO_PHICOMM:
-        case DEV_RM_2_HOME_PLUS:
-        case DEV_RM_2_2HOME_PLUS_GDT:
-        case DEV_RM_2_PRO_PLUS:
-        case DEV_RM_2_PRO_PLUS_2:
-        case DEV_RM_2_PRO_PLUS_2_BL:
-        case DEV_RM_MINI_SHATE:
-            return new RM2Device(deviceType, desc, host, mac);
-        case DEV_A1:
-            return new A1Device(host, mac);
-        case DEV_MP1:
-            return new MP1Device(host, mac);
-        case DEV_FLOUREON:
-            return new FloureonDevice(host, mac);
-        case DEV_HYSEN:
-            return new HysenDevice(host, mac);
+        switch (deviceType)
+        {
+            case DEV_SP1:
+                return new SP1Device(host, mac);
+            case DEV_SP2:
+            case DEV_SP2_HONEYWELL_ALT1:
+            case DEV_SP2_HONEYWELL_ALT2:
+            case DEV_SP2_HONEYWELL_ALT3:
+            case DEV_SP2_HONEYWELL_ALT4:
+            case DEV_SPMINI:
+            case DEV_SP3:
+            case DEV_SPMINI2:
+            case DEV_SPMINI_OEM_ALT1:
+            case DEV_SPMINI_OEM_ALT2:
+            case DEV_SPMINI_PLUS:
+                return new SP2Device(deviceType, desc, host, mac);
+            // 2026.01.09
+            case DEV_SPMINI_3:
+            case DEV_SP4L_CN:
+            case DEV_SP4M_JP:
+            case DEV_SP4M:
+            case DEV_MCB1:
+            case DEV_SP4L_EU:
+            case DEV_SP4L_AU:
+            case DEV_SPMINI_3_2:
+            case DEV_SP4L_UK:
+                return new SP4Device(deviceType, desc, host, mac);
+
+            case DEV_RM_2:
+            case DEV_RM_MINI:
+            case DEV_RM_MINI_OEM_1:
+            case DEV_RM_MINI_3:
+                return new RM2Device(deviceType, desc, host, mac);
+            case DEV_RM_PRO_PHICOMM:
+            case DEV_RM_2_HOME_PLUS:
+            case DEV_RM_2_2HOME_PLUS_GDT:
+            case DEV_RM_2_PRO_PLUS:
+            case DEV_RM_2_PRO_PLUS_2:
+            case DEV_RM_2_PRO_PLUS_2_BL:
+            case DEV_RM_MINI_SHATE:
+                return new RM2Device(deviceType, desc, host, mac);
+            case DEV_A1:
+                return new A1Device(host, mac);
+            case DEV_MP1:
+                return new MP1Device(host, mac);
+            case DEV_FLOUREON:
+                return new FloureonDevice(host, mac);
+            case DEV_HYSEN:
+                return new HysenDevice(host, mac);
         }
         return null;
     }
@@ -627,7 +691,8 @@ public abstract class BLDevice implements Closeable {
      * @throws IOException
      *             Problems when discovering
      */
-    public static BLDevice[] discoverDevices(InetAddress sourceIpAddr, int sourcePort, int timeout) throws IOException {
+    public static BLDevice[] discoverDevices(InetAddress sourceIpAddr, int sourcePort, int timeout) throws IOException
+    {
         boolean debug = log.isDebugEnabled();
 
         if (debug)
@@ -657,7 +722,8 @@ public abstract class BLDevice implements Closeable {
         byte[] receBytes = new byte[DISCOVERY_RECEIVE_BUFFER_SIZE];
 
         DatagramPacket recePacket = new DatagramPacket(receBytes, 0, receBytes.length);
-        if (timeout == 0) {
+        if (timeout == 0)
+        {
             if (debug)
                 log.debug("No timeout was set. Blocking thread until received");
             log.debug("Waiting for datagrams");
@@ -674,18 +740,20 @@ public abstract class BLDevice implements Closeable {
             short deviceType = (short) (receBytes[0x34] | receBytes[0x35] << 8);
 
             if (debug)
-                log.debug("Info: host=" + host + " mac=" + mac.getMacString() + " deviceType=0x"
-                        + Integer.toHexString(deviceType));
+                log.debug("Info: host=" + host + " mac=" + mac.getMacString() + " deviceType=0x" + Integer.toHexString(deviceType));
             log.debug("Creating BLDevice instance");
 
             BLDevice inst = createInstance(deviceType, host, mac);
 
-            if (inst != null) {
+            if (inst != null)
+            {
                 if (debug)
                     log.debug("Adding to found devices list");
 
                 devices.add(inst);
-            } else if (debug) {
+            }
+            else if (debug)
+            {
                 log.debug("Cannot create instance, returned null, not adding to found devices list");
             }
         } else {
@@ -755,76 +823,101 @@ public abstract class BLDevice implements Closeable {
         return out;
     }
     
-    public static String getDescOfType(short devType){
-        switch (devType) {
+    public static String getDescOfType(short devType)
+    {
+        switch (devType)
+        {
         
-        //
-        // RM Series
-        //
-        
-        case BLDevice.DEV_RM_2:
-            return DESC_RM_2;
-        case BLDevice.DEV_RM_MINI:
-            return DESC_RM_MINI;
-        case BLDevice.DEV_RM_MINI_3:
-            return DESC_RM_MINI_3;
-        case BLDevice.DEV_RM_PRO_PHICOMM:
-            return DESC_RM_PRO_PHICOMM;
-        case BLDevice.DEV_RM_2_HOME_PLUS:
-            return DESC_RM_2_HOME_PLUS;
-        case BLDevice.DEV_RM_2_2HOME_PLUS_GDT:
-            return DESC_RM_2_2HOME_PLUS_GDT;
-        case BLDevice.DEV_RM_2_PRO_PLUS:
-            return DESC_RM_2_PRO_PLUS;
-        case BLDevice.DEV_RM_2_PRO_PLUS_2:
-            return DESC_RM_2_PRO_PLUS_2;
-        case BLDevice.DEV_RM_2_PRO_PLUS_2_BL:
-            return DESC_RM_2_PRO_PLUS_2_BL;
-        case BLDevice.DEV_RM_MINI_SHATE:
-            return DESC_RM_MINI_SHATE;
-        
-        //
-        // SP2 Series
-        //
+            //
+            // RM Series
+            //
 
-        case BLDevice.DEV_SP2:
-            return DESC_SP2;
-        case BLDevice.DEV_SP2_HONEYWELL_ALT1:
-            return DESC_SP2_HONEYWELL_ALT1;
-        case BLDevice.DEV_SP2_HONEYWELL_ALT2:
-            return DESC_SP2_HONEYWELL_ALT2;
-        case BLDevice.DEV_SP2_HONEYWELL_ALT3:
-            return DESC_SP2_HONEYWELL_ALT3;
-        case BLDevice.DEV_SP2_HONEYWELL_ALT4:
-            return DESC_SP2_HONEYWELL_ALT4;
-        case BLDevice.DEV_SP3:
-            return DESC_SP3;
-        case BLDevice.DEV_SPMINI:
-            return DESC_SPMINI;
-        case BLDevice.DEV_SPMINI2:
-            return DESC_SPMINI2;
-        case BLDevice.DEV_SPMINI_OEM_ALT1:
-            return DESC_SPMINI_OEM_ALT1;
-        case BLDevice.DEV_SPMINI_OEM_ALT2:
-            return DESC_SPMINI_OEM_ALT2;
-        case BLDevice.DEV_SPMINI_PLUS:
-            return DESC_SPMINI_PLUS;
+            case BLDevice.DEV_RM_2:
+                return DESC_RM_2;
+            case BLDevice.DEV_RM_MINI:
+                return DESC_RM_MINI;
+            case BLDevice.DEV_RM_MINI_OEM_1:
+                return DESC_RM_MINI_OEM_1;
+            case BLDevice.DEV_RM_MINI_3:
+                return DESC_RM_MINI_3;
+            case BLDevice.DEV_RM_PRO_PHICOMM:
+                return DESC_RM_PRO_PHICOMM;
+            case BLDevice.DEV_RM_2_HOME_PLUS:
+                return DESC_RM_2_HOME_PLUS;
+            case BLDevice.DEV_RM_2_2HOME_PLUS_GDT:
+                return DESC_RM_2_2HOME_PLUS_GDT;
+            case BLDevice.DEV_RM_2_PRO_PLUS:
+                return DESC_RM_2_PRO_PLUS;
+            case BLDevice.DEV_RM_2_PRO_PLUS_2:
+                return DESC_RM_2_PRO_PLUS_2;
+            case BLDevice.DEV_RM_2_PRO_PLUS_2_BL:
+                return DESC_RM_2_PRO_PLUS_2_BL;
+            case BLDevice.DEV_RM_MINI_SHATE:
+                return DESC_RM_MINI_SHATE;
 
-        case BLDevice.DEV_SP1:
-        	return BLDevice.DESC_SP1;
-        case BLDevice.DEV_MP1:
-        	return BLDevice.DESC_MP1;
-        case BLDevice.DEV_A1:
-        	return BLDevice.DESC_A1;
-        case BLDevice.DEV_HYSEN:
-            return BLDevice.DESC_HYSEN;
-        case BLDevice.DEV_FLOUREON:
-            return BLDevice.DESC_FLOUREON;
-        //
-        // Unregonized
-        //
-        default:
-            return DESC_UNKNOWN;
+            //
+            // SP2 Series
+            //
+
+            case BLDevice.DEV_SP2:
+                return DESC_SP2;
+            case BLDevice.DEV_SP2_HONEYWELL_ALT1:
+                return DESC_SP2_HONEYWELL_ALT1;
+            case BLDevice.DEV_SP2_HONEYWELL_ALT2:
+                return DESC_SP2_HONEYWELL_ALT2;
+            case BLDevice.DEV_SP2_HONEYWELL_ALT3:
+                return DESC_SP2_HONEYWELL_ALT3;
+            case BLDevice.DEV_SP2_HONEYWELL_ALT4:
+                return DESC_SP2_HONEYWELL_ALT4;
+            case BLDevice.DEV_SP3:
+                return DESC_SP3;
+            case BLDevice.DEV_SPMINI:
+                return DESC_SPMINI;
+
+            // 2026.01.09
+            case BLDevice.DEV_SP4L_CN:
+                return DESC_SP4L_CN;
+            case BLDevice.DEV_SPMINI_3:
+                return DESC_SPMINI3;
+            case BLDevice.DEV_SP4M_JP:
+                return DESC_SP4M_JP;
+            case BLDevice.DEV_SP4M:
+                return DESC_SP4M;
+            case BLDevice.DEV_MCB1:
+                return DESC_MCB1;
+            case BLDevice.DEV_SP4L_EU:
+                return DESC_SP4L_EU;
+            case BLDevice.DEV_SP4L_AU:
+                return DESC_SP4L_AU;
+            case BLDevice.DEV_SPMINI_3_2:
+                return DESC_SPMINI_3_2;
+            case BLDevice.DEV_SP4L_UK:
+                return DESC_SP4L_UK;
+
+            case BLDevice.DEV_SPMINI2:
+                return DESC_SPMINI2;
+            case BLDevice.DEV_SPMINI_OEM_ALT1:
+                return DESC_SPMINI_OEM_ALT1;
+            case BLDevice.DEV_SPMINI_OEM_ALT2:
+                return DESC_SPMINI_OEM_ALT2;
+            case BLDevice.DEV_SPMINI_PLUS:
+                return DESC_SPMINI_PLUS;
+
+            case BLDevice.DEV_SP1:
+                return BLDevice.DESC_SP1;
+            case BLDevice.DEV_MP1:
+                return BLDevice.DESC_MP1;
+            case BLDevice.DEV_A1:
+                return BLDevice.DESC_A1;
+            case BLDevice.DEV_HYSEN:
+                return BLDevice.DESC_HYSEN;
+            case BLDevice.DEV_FLOUREON:
+                return BLDevice.DESC_FLOUREON;
+            //
+            // Unregonized
+            //
+            default:
+                return DESC_UNKNOWN;
         }
     }
 
