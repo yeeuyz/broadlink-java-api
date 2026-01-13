@@ -211,10 +211,10 @@ public class SP4Device extends BLDevice
         log.debug("SP4 get state  received bytes (decrypted): " + DatatypeConverter.printHexBinary(payload));
 
         // 解析js_len：struct.unpack_from("<I", payload, 0x08)（小端序int，0x08=8）  // js_len = struct.unpack_from("<I", payload, 0x08)[0]
-        int jsLen = ByteBuffer.wrap(payload)
-                .order(ByteOrder.LITTLE_ENDIAN) // 小端序，对应Python的<
-                .position(0x08)                // 偏移0x08
-                .getInt();                     // 解析int，对应I格式
+        ByteBuffer buffer_1 = ByteBuffer.wrap(payload);
+        buffer_1.order(ByteOrder.LITTLE_ENDIAN); // 小端序，对应Python的<
+        buffer_1.position(0x08);  // 偏移0x08
+        int jsLen = buffer_1.getInt();  // 解析int，对应I格式
 
         // 截取JSON字节：payload[0x0C:0x0C+js_len]（0x0C=12）  // 本条和下一条: state = json.loads(payload[0x0C:0x0C+js_len])
         int jsonStart = 0x0C;
